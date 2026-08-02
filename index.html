@@ -12,10 +12,10 @@
     background-size:cover; background-position:center; background-attachment:fixed; min-height:100vh; }
   .app{ max-width:420px; margin:0 auto; min-height:100vh; }
   .hero{ position:relative; height:150px; }
-  .hero .top{ position:absolute; top:16px; left:18px; right:18px; display:flex; align-items:center; gap:8px; color:#fff; }
+  .hero .top{ position:absolute; top:14px; left:16px; right:16px; display:flex; align-items:center; gap:8px; color:#fff; }
   .hero .dot{ width:10px; height:10px; border-radius:50%; background:#fff; }
   .hero b{ font-size:15px; letter-spacing:0.1em; font-weight:600; }
-  .hero .back{ margin-left:auto; font-size:13px; color:rgba(255,255,255,.9); background:none; border:none; cursor:pointer; }
+  .hero .back{ display:none; align-items:center; gap:4px; font-size:14px; font-weight:600; color:#fff; background:rgba(74,27,12,.42); border:none; border-radius:999px; padding:8px 15px 8px 12px; cursor:pointer; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); margin-right:4px; }
   .hero h1{ position:absolute; left:20px; right:20px; bottom:18px; margin:0; font-size:23px; color:#fff; font-weight:600; text-shadow:0 1px 12px rgba(74,27,12,.5); line-height:1.25; }
   .sheet{ background:rgba(250,246,242,.92); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
     border-radius:26px 26px 0 0; box-shadow:0 -8px 30px rgba(74,27,12,.18); padding:22px 16px 60px; }
@@ -97,7 +97,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="top"><span class="dot"></span><b>トキタビ</b><button class="back" id="backBtn" style="visibility:hidden;">← 戻る</button></div>
+    <div class="top"><button class="back" id="backBtn">‹ 戻る</button><span class="dot"></span><b>トキタビ</b></div>
     <h1 id="heroTitle">いつ行く？<br>から決める旅</h1>
   </div>
   <div class="dots"><i class="on" data-s="0"></i><i data-s="1"></i><i data-s="2"></i><i data-s="3"></i></div>
@@ -175,7 +175,15 @@ var OKT=[
   ]}
 ];
 var DB={
-  'ミュンヘン':{country:'ドイツ',en:'München / Oktoberfest',best:9,badge:'★ 9月・オクトーバーフェスト',foot:'SW 9/19–23 ・ ひとり旅',ind:{天気:'日中19℃・朝晩9℃',混雑:'世界中から集結',価格:'会期中は高騰',旬:'オクトーバーフェスト',安心:'会場は賑やか・持ち物と夜に注意'},list:OKT,tags:'#トキタビ #ひとり旅 #女子旅 #ミュンヘン #オクトーバーフェスト #シルバーウィーク',txt:'ミュンヘンのオクトーバーフェストは9月🍺 シルバーウィークに一人で行ってきます！'},
+  'ミュンヘン':{country:'ドイツ',en:'München / Oktoberfest',best:9,badge:'★ 9月・オクトーバーフェスト',foot:'シルバーウィーク 9/19–23',
+    det:{
+      weather:{v:'日中 約19℃ / 朝晩 約9℃・降水あり',src:SRC.wx,note:'平年値・本番はリアルタイム更新'},
+      crowd:{lv:5,label:'非常に混雑',desc:'開幕直後の週末は世界中から集結。人気テントは午前で入場規制になることも。',src:SRC.off_res},
+      price:{v:'航空券 約20万円〜 / 宿 約1.5万円/泊〜',fx:'想定レート 1€ ≈ 165円（本番は当日レートを反映）'},
+      season:'オクトーバーフェスト',
+      safe:{mark:'△',reason:'人目は多く昼は安心。ただし会場はスリ多発、夜は酔客も。貴重品は最小限に。',src:SRC.off_lost}
+    },
+    list:OKT,tags:'#トキタビ #ミュンヘン #オクトーバーフェスト #シルバーウィーク',txt:'ミュンヘンのオクトーバーフェストは9月🍺 シルバーウィークに行ってきます！'},
   'リスボン':{country:'ポルトガル',en:'Lisbon',best:5,ind:{天気:'快晴・穏やか',混雑:'夏前で空き',価格:'やや割安',旬:'ジャカランダ',安心:'日没20時・夜まで明るい'},list:GENERIC},
   'バンコク':{country:'タイ',en:'Bangkok',best:12,ind:{天気:'乾季で快適',混雑:'ピーク前で程よい',価格:'底値圏',旬:'ロイクラトン',安心:'人通り多く比較的安心'},list:GENERIC}
 };
@@ -207,41 +215,79 @@ var stack=[];
 function lookup(n){ for(var k in DB){ if(n.indexOf(k)>=0||k.indexOf(n)>=0) return Object.assign({key:k},DB[k]); } return null; }
 function strip(best){ var h=''; for(var m=1;m<=12;m++){ var d=Math.abs(m-best); var c=d===0?'#D85A30':(d<=2?'#F0997B':'#F5C4B3'); var f=d===0?'1.4':'1'; h+='<i style="flex:'+f+';background:'+c+';"></i>'; } return h; }
 function badge(d){ return d.badge||('★ '+MON[d.best-1]+'がベスト'); }
-function shiori(d,withBtn){
+function srcTag(s,dark){ if(!s) return ''; var col=dark?'#F5C4B3':'#185FA5'; return '<a href="'+s[1]+'" target="_blank" rel="noopener" style="font-size:11px;color:'+col+';text-decoration:none;">出典：'+s[0]+' ↗</a>'; }
+function markColor(m){ return (m==='◎'||m==='○')?'#9FE1CB':(m==='△'?'#FAC775':'#F09595'); }
+function indicators(d){
+  if(d.det){
+    var t=d.det;
+    var lc=t.crowd.lv>=4?'#E24B4A':(t.crowd.lv===3?'#EF9F27':'#1D9E75'), bars='';
+    for(var i=1;i<=5;i++){ bars+='<span style="flex:1;height:8px;border-radius:3px;background:'+(i<=t.crowd.lv?lc:'#F1EFE8')+';"></span>'; }
+    return '<div style="display:flex;flex-direction:column;gap:9px;margin-top:16px;">'+
+      '<div style="background:#fff;border-radius:13px;padding:12px 13px;"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;color:#993C1D;">天気</span><span style="font-size:10px;background:#E1F5EE;color:#0f6e56;padding:1px 7px;border-radius:999px;">最新</span></div><div style="font-size:15px;color:#4A1B0C;font-weight:600;margin-top:3px;">'+t.weather.v+'</div><div style="margin-top:4px;">'+srcTag(t.weather.src)+' <span style="font-size:11px;color:#9b8a82;">（'+t.weather.note+'）</span></div></div>'+
+      '<div style="background:#fff;border-radius:13px;padding:12px 13px;"><div style="font-size:11px;color:#993C1D;">混雑</div><div style="display:flex;gap:3px;margin-top:5px;">'+bars+'</div><div style="font-size:14px;color:#4A1B0C;font-weight:600;margin-top:6px;">レベル '+t.crowd.lv+'/5 ・ '+t.crowd.label+'</div><div style="font-size:12px;color:#6b5147;margin-top:2px;line-height:1.5;">'+t.crowd.desc+'</div><div style="margin-top:4px;">'+srcTag(t.crowd.src)+'</div></div>'+
+      '<div style="background:#fff;border-radius:13px;padding:12px 13px;"><div style="font-size:11px;color:#993C1D;">価格の目安</div><div style="font-size:15px;color:#4A1B0C;font-weight:600;margin-top:3px;">'+t.price.v+'</div><div style="font-size:12px;color:#6b5147;margin-top:3px;">'+t.price.fx+'</div></div>'+
+      '<div style="background:#fff;border-radius:13px;padding:10px 13px;font-size:13px;"><span style="font-size:11px;color:#993C1D;">旬：</span><span style="font-weight:600;color:#4A1B0C;">'+t.season+'</span></div>'+
+      '<div style="background:#712B13;border-radius:13px;padding:12px 14px;"><div style="display:flex;align-items:flex-start;gap:10px;"><span style="font-size:24px;font-weight:700;color:'+markColor(t.safe.mark)+';line-height:1;">'+t.safe.mark+'</span><div><div style="font-size:11px;color:#F5C4B3;">ひとり旅 安心度</div><div style="font-size:12px;color:#fff;margin-top:2px;line-height:1.5;">'+t.safe.reason+'</div><div style="margin-top:4px;">'+srcTag(t.safe.src,true)+'</div></div></div></div>'+
+    '</div>';
+  }
   var i=d.ind;
+  return '<div class="grid">'+
+    '<div class="cell"><div class="k">天気</div><div class="v">'+i.天気+'</div></div>'+
+    '<div class="cell"><div class="k">混雑</div><div class="v">'+i.混雑+'</div></div>'+
+    '<div class="cell"><div class="k">価格</div><div class="v">'+i.価格+'</div></div>'+
+    '<div class="cell"><div class="k">旬</div><div class="v">'+i.旬+'</div></div>'+
+    '<div class="safe"><div>🛡️</div><div><div class="k">ひとり旅 安心度</div><div class="v">'+i.安心+'</div></div></div>'+
+  '</div>';
+}
+function shiori(d,withBtn){
   var h='<div class="card" data-city="'+d.key+'">'+
-    '<div class="hd"><div class="bd"><span class="cdot"></span><span class="bn">トキタビ</span></div><span style="font-size:11px;color:#993C1D;">SOLO TRIP しおり</span></div>'+
+    '<div class="hd"><div class="bd"><span class="cdot"></span><span class="bn">トキタビ</span></div><span style="font-size:11px;color:#993C1D;">時期のしおり</span></div>'+
     '<div class="country">'+d.country+'</div><div class="city">'+d.key+'</div><div class="en">'+d.en+'</div>'+
     '<div class="badge">'+badge(d)+'</div>'+
     '<div class="strip">'+strip(d.best)+'</div>'+
     '<div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:#993C1D;"><span>1月</span><span style="color:#D85A30;font-weight:600;">'+MON[d.best-1]+'</span><span>12月</span></div>'+
-    '<div class="grid">'+
-      '<div class="cell"><div class="k">天気</div><div class="v">'+i.天気+'</div></div>'+
-      '<div class="cell"><div class="k">混雑</div><div class="v">'+i.混雑+'</div></div>'+
-      '<div class="cell"><div class="k">価格</div><div class="v">'+i.価格+'</div></div>'+
-      '<div class="cell"><div class="k">旬</div><div class="v">'+i.旬+'</div></div>'+
-      '<div class="safe"><div>🛡️</div><div><div class="k">ひとり旅 安心度</div><div class="v">'+i.安心+'</div></div></div>'+
-    '</div>'+
-    '<div class="foot"><span>'+(d.foot||(state.nights+'泊'+(state.nights+1)+'日 ・ ひとり旅'))+'</span><span>@tokitabi</span></div>'+
+    indicators(d)+
+    '<div class="foot"><span>'+(d.foot||(state.nights+'泊'+(state.nights+1)+'日'))+'</span><span>@tokitabi</span></div>'+
   '</div>';
-  if(withBtn) h+='<button class="cardbtn" onclick="gotoChecklist(\''+d.key+'\')">このプランで準備する →</button>';
+  if(withBtn) h+='<button class="cardbtn" onclick="gotoItinerary(\''+d.key+'\')">詳しい行程プランを作る →</button>';
   return h;
 }
 /* ---------- screens ---------- */
-function setHero(title,showBack){ document.getElementById('heroTitle').innerHTML=title; document.getElementById('backBtn').style.visibility=showBack?'visible':'hidden'; }
+function setHero(title,showBack){ document.getElementById('heroTitle').innerHTML=title; document.getElementById('backBtn').style.display=showBack?'inline-flex':'none'; }
 function setDots(n){ Array.prototype.forEach.call(document.querySelectorAll('.dots i'),function(el){ el.className=(+el.dataset.s===n)?'on':''; }); }
 function go(render,title,showBack,dot){ stack.push({render:render,title:title,dot:dot}); setHero(title,true); setDots(dot); document.getElementById('sheet').innerHTML=render(); window.scrollTo(0,0); }
 function replaceTo(render,title,showBack,dot){ setHero(title,showBack); setDots(dot); document.getElementById('sheet').innerHTML=render(); window.scrollTo(0,0); }
 document.getElementById('backBtn').onclick=function(){ if(stack.length>1){ stack.pop(); var s=stack[stack.length-1]; setHero(s.title, stack.length>1); setDots(s.dot); document.getElementById('sheet').innerHTML=s.render(); window.scrollTo(0,0); } };
 
+var REC=[
+  {city:'ソウル',country:'韓国',score:91,r:'秋が快適・近くて安い',t:'◎',c:'◎',p:'◎'},
+  {city:'台北',country:'台湾',score:90,r:'11月がベスト・物価安め',t:'○',c:'◎',p:'◎'},
+  {city:'バリ島',country:'インドネシア',score:88,r:'乾季で今が旬',t:'◎',c:'○',p:'○'},
+  {city:'ミュンヘン',country:'ドイツ',score:86,r:'9月オクトーバーフェスト（会期中は高め）',t:'◎',c:'△',p:'○'},
+  {city:'リスボン',country:'ポルトガル',score:83,r:'初秋が快適・欧州では手頃',t:'○',c:'○',p:'△'}
+];
+function scoreColor(s){ return s>=90?'#0f6e56':(s>=85?'#854f0b':'#993C1D'); }
+function recCards(){
+  return REC.map(function(x){
+    var added=state.dests.indexOf(x.city)>=0;
+    return '<button class="rec" data-city="'+x.city+'" style="width:100%;text-align:left;background:'+(added?'#F3F8F1':'#fff')+';border:1px solid '+(added?'#9FE1CB':'#EFE2DB')+';border-radius:13px;padding:11px 13px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;">'+
+      '<div style="flex:1;"><div style="font-size:15px;font-weight:600;color:#4A1B0C;">'+x.city+' <span style="font-size:11px;color:#8a6f63;font-weight:400;">'+x.country+'</span>'+(added?' <span style="font-size:11px;color:#0f6e56;">✓追加済み</span>':'')+'</div>'+
+        '<div style="font-size:12px;color:#6b5147;margin-top:2px;">'+x.r+'</div>'+
+        '<div style="display:flex;gap:10px;margin-top:5px;font-size:11px;color:#993C1D;"><span>🗓 時期'+x.t+'</span><span>💰 コスト'+x.c+'</span><span>👥 人気'+x.p+'</span></div></div>'+
+      '<div style="flex:none;text-align:center;"><div style="font-size:23px;font-weight:700;color:'+scoreColor(x.score)+';line-height:1;">'+x.score+'</div><div style="font-size:9px;color:#8a6f63;">おすすめ度</div></div>'+
+    '</button>';
+  }).join('');
+}
 function inputScreen(){
   return ''+
   '<div class="label">行き先の候補 <span class="req">必須</span></div>'+
   '<div style="display:flex;gap:8px;"><input type="text" id="dest" placeholder="例：ミュンヘン、バンコク…" autocomplete="off"><button class="add" id="addBtn">追加</button></div>'+
   '<div class="chips" id="chips"></div><div class="hint">複数入れると、月ごとのベストを並べて比べられます。</div>'+
+  '<div class="label">サイトからのおすすめ <span style="font-size:11px;color:#8a6f63;font-weight:400;">時期・コスト・人気で採点</span></div>'+
+  '<div style="font-size:12px;color:#8a6f63;margin:-4px 0 10px;">タップで候補に追加できます。</div>'+
+  '<div id="recs">'+recCards()+'</div>'+
   '<div class="label">何泊する？</div><div style="display:flex;align-items:center;gap:14px;"><div class="stepper"><button id="minus">−</button><span id="nights">'+state.nights+'</span><button id="plus">＋</button></div><span style="font-size:13px;color:#993C1D;">泊</span></div>'+
   '<div class="label">いちばん重視するのは？</div><div class="seg" id="pri"><button data-v="予算">予算</button><button data-v="快適">快適さ</button><button data-v="イベント">旬・イベント</button></div>'+
-  '<div class="label">同行</div><div class="traveler">👜 ひとり旅（女子）— 安心度をしっかり見ます</div>'+
   '<button class="cta" id="go">ベストな時期を出す</button>'+
   '<button id="toAudit" style="width:100%;height:48px;border:1.5px solid #F0997B;border-radius:14px;background:#fff;color:#712B13;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;">📄 もう行程がある？行程表を診断 →</button>';
 }
@@ -249,7 +295,8 @@ function bindInput(){
   var chips=document.getElementById('chips'), go2=document.getElementById('go');
   function sync(){ go2.disabled=state.dests.length===0; }
   function render(){ chips.innerHTML=state.dests.map(function(d,i){return '<span class="chip">'+d+'<button data-i="'+i+'">×</button></span>';}).join('');
-    Array.prototype.forEach.call(chips.querySelectorAll('button'),function(b){b.onclick=function(){state.dests.splice(+b.dataset.i,1);render();sync();};}); sync(); }
+    Array.prototype.forEach.call(chips.querySelectorAll('button'),function(b){b.onclick=function(){state.dests.splice(+b.dataset.i,1);render();sync();};}); sync(); refreshRecs(); }
+  function refreshRecs(){ var box=document.getElementById('recs'); if(!box) return; box.innerHTML=recCards(); Array.prototype.forEach.call(box.querySelectorAll('.rec'),function(b){ b.onclick=function(){ var c=b.dataset.city; var idx=state.dests.indexOf(c); if(idx<0) state.dests.push(c); else state.dests.splice(idx,1); render(); }; }); }
   function add(){ var v=document.getElementById('dest').value.trim(); if(v&&state.dests.indexOf(v)<0){state.dests.push(v);document.getElementById('dest').value='';render();} document.getElementById('dest').focus(); }
   document.getElementById('addBtn').onclick=add;
   document.getElementById('dest').addEventListener('keydown',function(e){ if(e.key==='Enter'){e.preventDefault();add();} });
@@ -264,12 +311,61 @@ function bindInput(){
 }
 function resultScreen(){
   var body=state.dests.map(function(name){ var d=lookup(name); if(!d) return '<div class="card"><div class="city">'+name+'</div><p style="color:#993C1D;font-size:13px;margin-top:12px;line-height:1.6;">本番ではAIが気候・混雑・価格・旬・安心度からベスト月を提案します。（デモ対応：ミュンヘン / リスボン / バンコク）</p></div>'; return shiori(d,true); }).join('');
-  return '<div style="font-size:13px;color:#993C1D;margin-bottom:12px;">✦ '+state.dests.length+'件の行き先のベスト時期</div>'+body+'<p class="demo">タップして準備に進めます</p>';
+  return '<div style="font-size:13px;color:#993C1D;margin-bottom:12px;">✦ '+state.dests.length+'件の行き先のベスト時期</div>'+body+'<p class="demo">「詳しい行程プランを作る」でAIが日程案を作成します。</p>';
 }
-function gotoChecklist(city){ state.primary=city; go(checklistScreen,'旅の準備リスト',true,2); }
+var ITIN={
+  'ミュンヘン':{sub:'2026/9/19〜21（シルバーウィーク・オクトーバーフェスト会期）の3日間の案',note:'※日程はデモ（会期に合わせた例）。本番は入力した旅行日程に合わせて生成します。',days:[
+    {d:'DAY 1 ・ 9/19（土）到着＆開幕',items:[
+      ['08:30','ミュンヘン着 → 中央駅で荷物預け'],
+      ['10:00','テレージエンヴィーゼへ移動、開幕パレードを見学'],
+      ['12:00','樽開け「O’zapft is!」→ そのままテント入り'],
+      ['17:00','マリエン広場・新市庁舎のからくり時計'],
+      ['19:00','ホフブロイハウスで夕食（ビアホール）']
+    ]},
+    {d:'DAY 2 ・ 9/20（日）市内＋Wiesn',items:[
+      ['09:00','レジデンツ（旧宮殿）'],
+      ['10:45','大聖堂（塔から市街を一望）'],
+      ['12:00','ヴィクトアリエンマルクトで昼食'],
+      ['14:00','Wiesnでテント体験（予約 or 無料入場枠）'],
+      ['19:00','市内でゆっくり／おみやげ']
+    ]},
+    {d:'DAY 3 ・ 9/21（月）郊外',items:[
+      ['07:30','ノイシュヴァンシュタイン城ツアー出発（早朝）'],
+      ['13:00','城見学（入場は時間指定チケット）'],
+      ['18:00','ミュンヘン帰着'],
+      ['19:30','Wiesnは軽めに or 休息']
+    ]}
+  ]},
+  '_generic':{sub:'AIが作成した基本プラン（2日間の例）',note:'※本番は入力した旅行日程に合わせて日付入りで生成します。',days:[
+    {d:'DAY 1',items:[['10:00','到着・ホテルへ／周辺を散策'],['13:00','昼食（名物グルメ）'],['15:00','主要スポットを効率よく巡る'],['19:00','夕食']]},
+    {d:'DAY 2',items:[['09:00','人気エリアや市場へ'],['13:00','ベスト月ならではの体験（旬・イベント）'],['16:00','カフェ休憩／お買い物'],['19:00','夜景 or ローカルな一軒']]}
+  ]}
+};
+function gotoItinerary(city){ state.primary=city; go(itineraryScreen,'行程プラン案',true,2); }
+function itineraryScreen(){
+  var d=lookup(state.primary)||{key:state.primary};
+  var plan=ITIN[d.key]||ITIN._generic;
+  var days=plan.days.map(function(day){
+    var items=day.items.map(function(it){ return '<div style="display:flex;gap:10px;padding:6px 0;"><span style="flex:none;min-width:52px;font-size:12px;color:#993C1D;font-weight:600;">'+it[0]+'</span><span style="font-size:14px;line-height:1.5;">'+it[1]+'</span></div>'; }).join('');
+    return '<div style="background:#fff;border:1px solid #EFE2DB;border-radius:14px;padding:14px 16px;margin-bottom:10px;"><div style="font-size:14px;font-weight:600;color:#712B13;margin-bottom:4px;">'+day.d+'</div>'+items+'</div>';
+  }).join('');
+  return '<div class="ctx"><span>📍 '+d.key+'</span><span>'+badge(d)+'</span></div>'+
+    '<div style="background:#E1F5EE;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:13px;color:#0f5a48;line-height:1.6;"><b>✨ AIが行程プランを作成しました</b><br>'+plan.sub+'。このまま進めるか、作り直すか選べます。</div>'+
+    '<div style="margin-top:14px;">'+days+'</div>'+
+    (plan.note?'<p style="font-size:12px;color:#9b8a82;line-height:1.6;margin:4px 0 0;">'+plan.note+'</p>':'')+
+    '<button class="cta" id="itinProceed" style="margin-top:14px;">✅ このプランで進める</button>'+
+    '<button id="itinRedo" style="width:100%;height:46px;border:1.5px solid #F0997B;border-radius:14px;background:#fff;color:#712B13;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;">↺ 別の案を作る</button>'+
+    '<p class="demo">「2日目を海メインに」「もっとゆったり」等の指示で作り直せます（本番）。</p>';
+}
+function bindItinerary(){
+  document.getElementById('itinProceed').onclick=function(){ gotoChecklist(state.primary); };
+  var r=document.getElementById('itinRedo'); if(r) r.onclick=function(){ r.textContent='別の案を生成中…（デモ）'; setTimeout(function(){ r.textContent='↺ 別の案を作る'; },900); };
+}
+function gotoChecklist(city){ state.primary=city; go(checklistScreen,'旅の準備リスト',true,3); }
 function checklistScreen(){
   var d=lookup(state.primary)||{key:state.primary,best:1,list:GENERIC};
-  var ctx='<div class="ctx"><span>📍 '+d.key+'</span><span>'+badge(d)+'</span><span>'+(d.foot||(state.nights+'泊'+(state.nights+1)+'日'))+'</span><span>ひとり旅（女子）</span></div>';
+  var ctx='<div class="ctx"><span>📍 '+d.key+'</span><span>'+badge(d)+'</span><span>'+(d.foot||(state.nights+'泊'+(state.nights+1)+'日'))+'</span></div>'+
+    '<div style="background:#E1F5EE;border-radius:12px;padding:11px 14px;margin-top:12px;font-size:13px;color:#0f5a48;line-height:1.6;">✅ 選んだ行程プランに沿った準備リストです。上から順にチェックしていきましょう。</div>';
   var total=0,html='';
   d.list.forEach(function(g,gi){ html+='<div class="grp"><h2><span class="ic">'+g.icon+'</span>'+g.title+'</h2>';
     g.items.forEach(function(it,ii){ total++; var id=gi+'-'+ii; var done=state.checks[state.primary]&&state.checks[state.primary][id];
@@ -280,7 +376,7 @@ function checklistScreen(){
         '<div class="cwhybox"><div class="cwhyin"><div class="cwhytxt">'+it.why+'</div><div class="cwhysrc">'+srcHtml+'</div></div></div>'+
       '</div>'; });
     html+='</div>'; });
-  return ctx+'<div style="margin:16px 0 4px;display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:13px;color:#712B13;font-weight:600;">準備の進み具合</span><span style="font-size:13px;color:#993C1D;"><b id="cd">0</b> / '+total+'</span></div><div class="bar"><i id="cf"></i></div>'+html+'<button class="cta" id="toShare">しおりを保存・シェア →</button><p class="demo">※ デモ：本番では行き先×時期×ひとり旅に合わせてAIが自動生成</p>';
+  return ctx+'<div style="margin:16px 0 4px;display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:13px;color:#712B13;font-weight:600;">準備の進み具合</span><span style="font-size:13px;color:#993C1D;"><b id="cd">0</b> / '+total+'</span></div><div class="bar"><i id="cf"></i></div>'+html+'<button class="cta" id="toShare">🖼 しおり画像を保存・シェア</button><p class="demo">※ デモ：本番では行き先×時期×行程プランに合わせてAIが自動生成します。</p>';
 }
 function bindChecklist(){
   var total=document.querySelectorAll('.ci').length;
@@ -335,16 +431,89 @@ function auditScreen(){
     '<div style="display:flex;gap:10px;margin:16px 0 4px;"><div style="flex:1;background:#fff;border:1px solid #EFE2DB;border-radius:12px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:#0f6e56;">4</div><div style="font-size:11px;color:#993C1D;">好プレー</div></div><div style="flex:1;background:#fff;border:1px solid #EFE2DB;border-radius:12px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:#a32d2d;">6</div><div style="font-size:11px;color:#993C1D;">抜け漏れ</div></div><div style="flex:1;background:#fff;border:1px solid #EFE2DB;border-radius:12px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:#854f0b;">4</div><div style="font-size:11px;color:#993C1D;">最適化</div></div></div>'+
     '<div class="grp"><h2 style="margin-bottom:4px;">🎒 準備の抜け漏れ</h2><div style="font-size:12px;color:#993C1D;margin-bottom:10px;">行程に見当たらない“やるべきこと”。</div>'+gaps+'</div>'+
     '<div class="grp"><h2 style="margin-bottom:4px;">🧭 行程の最適化</h2><div style="font-size:12px;color:#993C1D;margin-bottom:10px;">この行程ならではの改善ポイント。</div>'+opts+'</div>'+
+    '<div style="background:#FFF7E8;border:1px solid #FAC775;border-radius:12px;padding:12px 14px;margin-top:6px;font-size:13px;color:#7a5a12;line-height:1.6;">気づきはここまで。<b>次にやることを選びましょう。</b></div>'+
+    '<button class="cta" id="auImprove" style="margin-top:12px;">✨ 改善版を作る（再診断でスコアUP）</button>'+
+    '<button id="auToList" style="width:100%;height:48px;border:1.5px solid #F0997B;border-radius:14px;background:#fff;color:#712B13;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;">🎒 抜け漏れを準備リストにする</button>'+
     '<p class="demo">※ 実例：お送りいただいたドイツ行程を解析。本番では任意のPDF/画像/ExcelをAIが解析します。</p>'+
   '</div>';
 }
 function bindAudit(){
   Array.prototype.forEach.call(document.querySelectorAll('.auWhy'),function(b){ b.onclick=function(){ var w=document.getElementById('auw'+b.dataset.i); var open=w.style.display==='block'; w.style.display=open?'none':'block'; b.textContent=open?'なぜ必要？ ⌄':'閉じる ⌃'; }; });
+  var im=document.getElementById('auImprove'); if(im) im.onclick=function(){ gotoImprove(); };
+  var tl=document.getElementById('auToList'); if(tl) tl.onclick=function(){ state.primary='ミュンヘン'; gotoChecklist('ミュンヘン'); };
+}
+var IMP_CHANGES=[
+  {t:'9/20 Wiesnを16:00→13:30入りに前倒し',d:'午前の市内観光を凝縮し、混雑ピーク前に着席。日曜午後の入場規制リスクを回避。'},
+  {t:'9/21 城後のWiesnは軽め（19:00〜20:00）',d:'長丁場を緩和。荷物は3Lのサブバッグに詰め替えてテント入場もクリア。'},
+  {t:'9/22 1本早いICEでフランクフルトへ',d:'乗継バッファを確保。DB遅延にも耐えられる余裕。'},
+  {t:'準備6件を追加でクリア',d:'テント予約・eSIM・海外保険・現金ユーロ・3Lバッグ・パスポート/入国要件を反映。'}
+];
+var IMP_PLAN=[
+  ['9/18 金','成田→ハノイ（乗継観光）',false],
+  ['9/19 土','ミュンヘン着→開幕Wiesn（午前入り維持）＋出発前準備を完了',false],
+  ['9/20 日','市内観光を午前に凝縮 →【変更】13:30 Wiesn入り（混雑前に着席）',true],
+  ['9/21 月','城2つ →【変更】Wiesnは軽め・早めにアウクスブルクへ',true],
+  ['9/22 火','【変更】1本早いICEでFRA→ハノイ（乗継に余裕）',true],
+  ['9/23 水','ハノイ→羽田',false]
+];
+function gotoImprove(){ go(improveScreen,'改善版＆再診断',true,0); }
+function improveScreen(){
+  return '<div class="ctx"><span>ドイツ 9/18〜23</span><span>4名グループ</span></div>'+
+    '<div style="background:#fff;border:1px solid #EFE2DB;border-radius:14px;padding:16px;margin-top:14px;">'+
+      '<div style="font-size:12px;color:#8a6f63;">現在の旅じたくスコア</div>'+
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-top:2px;"><span style="font-size:38px;font-weight:700;color:#a32d2d;">62</span><span style="font-size:14px;color:#8a6f63;">/ 100</span></div>'+
+      '<div style="height:8px;background:#F1EFE8;border-radius:999px;overflow:hidden;margin-top:6px;"><i style="display:block;height:100%;width:62%;background:#E24B4A;"></i></div>'+
+      '<div style="display:flex;gap:8px;margin-top:12px;">'+
+        '<div style="flex:1;background:#FCEBEB;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:18px;font-weight:700;color:#a32d2d;">6</div><div style="font-size:10px;color:#a32d2d;">抜け漏れ</div></div>'+
+        '<div style="flex:1;background:#FCEBEB;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:13px;font-weight:700;color:#a32d2d;margin-top:3px;">高</div><div style="font-size:10px;color:#a32d2d;">9/20混雑</div></div>'+
+        '<div style="flex:1;background:#FAEEDA;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:13px;font-weight:700;color:#854f0b;margin-top:3px;">薄い</div><div style="font-size:10px;color:#854f0b;">9/22乗継</div></div>'+
+      '</div>'+
+    '</div>'+
+    '<button class="cta" id="imGen" style="margin-top:14px;">✨ 改善版を自動生成 → 再診断</button>'+
+    '<div id="imAfter" style="display:none;margin-top:20px;"></div>';
+}
+function bindImprove(){
+  var btn=document.getElementById('imGen'); if(!btn) return;
+  btn.onclick=function(){
+    btn.textContent='生成＆再診断中…'; btn.disabled=true; btn.style.opacity='.7';
+    setTimeout(function(){
+      btn.style.display='none';
+      var changes=IMP_CHANGES.map(function(c){return '<div style="display:flex;gap:10px;background:#fff;border:1px solid #F2E7E0;border-radius:12px;padding:11px 13px;margin-bottom:8px;"><span style="color:#0f6e56;font-size:16px;">✓</span><div><div style="font-size:14px;font-weight:500;">'+c.t+'</div><div style="font-size:12px;color:#6b5147;margin-top:3px;line-height:1.6;">'+c.d+'</div></div></div>';}).join('');
+      var plan=IMP_PLAN.map(function(r){return '<div style="display:flex;gap:10px;font-size:13px;padding:6px 0;border-bottom:1px dashed #F2E7E0;"><span style="color:#993C1D;font-weight:600;min-width:58px;">'+r[0]+'</span><span>'+r[1]+(r[2]?' <span style="font-size:10px;background:#FAEEDA;color:#854f0b;padding:1px 7px;border-radius:999px;">変更</span>':'')+'</span></div>';}).join('');
+      var af=document.getElementById('imAfter'); af.style.display='block';
+      af.innerHTML=''+
+        '<div style="background:#E1F5EE;border:1px solid #9FE1CB;border-radius:16px;padding:18px;text-align:center;">'+
+          '<div style="font-size:13px;color:#0f6e56;font-weight:600;">再診断の結果 🎉</div>'+
+          '<div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:8px;">'+
+            '<div><div style="font-size:11px;color:#9b8a82;">Before</div><div style="font-size:22px;font-weight:700;color:#a32d2d;text-decoration:line-through;">62</div></div>'+
+            '<div style="font-size:22px;color:#0f6e56;">→</div>'+
+            '<div><div style="font-size:11px;color:#0f6e56;">After</div><div style="font-size:44px;font-weight:700;color:#0f6e56;line-height:1;"><span id="imScore">62</span></div></div>'+
+            '<div style="background:#0f6e56;color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;">+32</div>'+
+          '</div>'+
+          '<div style="height:9px;background:#fff;border:1px solid #9FE1CB;border-radius:999px;overflow:hidden;margin-top:12px;"><i id="imBar" style="display:block;height:100%;width:62%;background:#1D9E75;transition:width 1.2s ease-out;"></i></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:8px;margin-top:12px;">'+
+          '<div style="flex:1;background:#E1F5EE;border-radius:10px;padding:9px;text-align:center;"><div style="font-size:12px;color:#a32d2d;text-decoration:line-through;">6</div><div style="font-size:18px;font-weight:700;color:#0f6e56;">0</div><div style="font-size:10px;color:#0f6e56;">抜け漏れ</div></div>'+
+          '<div style="flex:1;background:#E1F5EE;border-radius:10px;padding:9px;text-align:center;"><div style="font-size:11px;color:#a32d2d;text-decoration:line-through;">高</div><div style="font-size:14px;font-weight:700;color:#0f6e56;">低</div><div style="font-size:10px;color:#0f6e56;">9/20混雑</div></div>'+
+          '<div style="flex:1;background:#E1F5EE;border-radius:10px;padding:9px;text-align:center;"><div style="font-size:11px;color:#854f0b;text-decoration:line-through;">薄い</div><div style="font-size:13px;font-weight:700;color:#0f6e56;">確保</div><div style="font-size:10px;color:#0f6e56;">9/22乗継</div></div>'+
+        '</div>'+
+        '<div style="font-size:15px;font-weight:600;margin:20px 0 8px;">🔧 変更した点</div>'+changes+
+        '<div style="font-size:15px;font-weight:600;margin:20px 0 8px;">📋 改善版の行程</div><div style="background:#fff;border:1px solid #EFE2DB;border-radius:13px;padding:10px 14px;">'+plan+'</div>'+
+        '<button class="cta" id="imToList" style="margin-top:16px;">🎒 この内容で準備リストへ</button>'+
+        '<p class="demo">※ デモ：本番ではAIが指摘を反映した行程を生成し、自動で再スコアリングします。</p>';
+      document.getElementById('imBar').style.width='94%';
+      var s=62, el=document.getElementById('imScore'), t=setInterval(function(){ s++; el.textContent=s; if(s>=94) clearInterval(t); },26);
+      var tl=document.getElementById('imToList'); if(tl) tl.onclick=function(){ state.primary='ミュンヘン'; gotoChecklist('ミュンヘン'); };
+      af.scrollIntoView({behavior:'smooth',block:'start'});
+    },700);
+  };
 }
 /* re-bind after each render */
 var _sheet=document.getElementById('sheet');
 new MutationObserver(function(){
   if(document.getElementById('go')) bindInput();
+  else if(document.getElementById('itinProceed')) bindItinerary();
+  else if(document.getElementById('imGen')) bindImprove();
   else if(document.getElementById('toShare')) bindChecklist();
   else if(document.getElementById('save')) bindShare();
   else if(document.getElementById('auditRoot')) bindAudit();
