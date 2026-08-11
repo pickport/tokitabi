@@ -172,18 +172,77 @@ var OKT=[
     {t:'遺失物センター/警察の場所を控える（Esperantoplatz）',why:'会場に警察600名超、Fundbüro(遺失物)はEsperantoplatz付近。紛失時の初動が早くなる。',s:[SRC.off_lost]}
   ]}
 ];
+var PREP_EU=[
+  {title:'書類・お金',icon:'💳',items:[{t:'パスポート残存を確認（出国後3ヶ月以上）',why:'シェンゲン圏は出国予定日から3ヶ月以上が最低要件。',s:[SRC.state]},{t:'ETIAS：2026年後半に開始予定・時期を確認',why:'開始前は不要。90日以内の短期観光はビザ不要。',s:[SRC.etias]},{t:'海外旅行保険に加入（医療手厚め）',why:'欧州の医療費は高額になりうる。',s:[]},{t:'ユーロ現金＋クレカ2枚',why:'現金しか使えない場面に備える。',s:[]}]},
+  {title:'通信・移動',icon:'📶',items:[{t:'eSIM（欧州）を用意',why:'到着後すぐ地図・連絡に。',s:[]},{t:'オフラインマップをDL',why:'電波不安定・夜道対策。',s:[]},{t:'変換プラグ C/F・230V',why:'日本(A・100V)と異なる。',s:[]}]},
+  {title:'服・気候',icon:'🌤️',items:[{t:'ベスト月の気候に合わせた服装',why:'寒暖差に重ね着で対応。',s:[]},{t:'石畳でも歩きやすい靴',why:'旧市街は石畳が多い。',s:[]},{t:'折りたたみ傘',why:'天気が変わりやすい。',s:[]}]},
+  {title:'安全・持ち物',icon:'🛡️',items:[{t:'緊急連絡先・大使館を控える',why:'紙＋スクショで二重に。',s:[]},{t:'観光地はスリ多発→貴重品を分散',why:'主要観光地・交通機関で多い。',s:[]},{t:'夜は明るい道・配車アプリ',why:'流しのタクシーは避ける。',s:[]},{t:'家族に日程共有',why:'位置共有も有効。',s:[]}]}
+];
+var PREP_ASIA=[
+  {title:'書類・お金',icon:'💳',items:[{t:'パスポート残存を確認（国により3〜6ヶ月）',why:'国ごとに条件が異なる。',s:[]},{t:'短期滞在のビザ要否を確認',why:'日本国籍でも国により必要。',s:[]},{t:'海外旅行保険に加入',why:'医療費に備える。',s:[]},{t:'現地通貨を多め＋クレカ',why:'屋台・市場は現金主流。',s:[]}]},
+  {title:'通信・移動',icon:'📶',items:[{t:'eSIM（アジア）を用意',why:'到着後すぐ接続。',s:[]},{t:'配車アプリ（Grab等）を入れる',why:'移動が安全・明朗。',s:[]},{t:'変換プラグは国により異なる→要確認',why:'A/C/G等さまざま。',s:[]}]},
+  {title:'服・気候',icon:'🌤️',items:[{t:'高温多湿対策・薄手＋羽織り',why:'屋内は冷房が強い。',s:[]},{t:'歩きやすい靴',why:'歩く量が多い。',s:[]},{t:'雨具（スコール対策）',why:'突然の雨に備える。',s:[]}]},
+  {title:'安全・持ち物',icon:'🛡️',items:[{t:'緊急連絡先を控える',why:'紙＋スクショで二重に。',s:[]},{t:'混雑地はスリ注意・貴重品分散',why:'市場・繁華街で多い。',s:[]},{t:'宿は安全な立地を選ぶ',why:'駅近・明るい通り。',s:[]},{t:'家族に日程共有',why:'位置共有も有効。',s:[]}]}
+];
+var PREP_US=[
+  {title:'書類・お金',icon:'💳',items:[{t:'パスポート残存を確認',why:'早めに確認を。',s:[]},{t:'ESTA（電子渡航認証）を取得',why:'米国はビザ免除でもESTAが必須。',s:[]},{t:'海外旅行保険に加入（医療費高額）',why:'米国の医療費は特に高額。',s:[]},{t:'USドル＋クレカ（チップ用に小額紙幣）',why:'チップ文化に備える。',s:[]}]},
+  {title:'通信・移動',icon:'📶',items:[{t:'eSIM（米国）を用意',why:'到着後すぐ接続。',s:[]},{t:'オフラインマップをDL',why:'移動の必需。',s:[]},{t:'変換プラグ A・120V',why:'日本と近いが要確認。',s:[]}]},
+  {title:'服・気候',icon:'🌤️',items:[{t:'ベスト月の気候に合わせて',why:'地域差が大きい。',s:[]},{t:'歩きやすい靴',why:'移動が多い。',s:[]},{t:'上着（冷房対策）',why:'屋内は冷房が強い。',s:[]}]},
+  {title:'安全・持ち物',icon:'🛡️',items:[{t:'緊急連絡先を控える',why:'紙＋スクショで二重に。',s:[]},{t:'夜は治安の良いエリア・配車',why:'エリアで治安差が大きい。',s:[]},{t:'貴重品は最小限',why:'置き引き対策。',s:[]},{t:'家族に日程共有',why:'位置共有も有効。',s:[]}]}
+];
+var PREP_OCE=[
+  {title:'書類・お金',icon:'💳',items:[{t:'パスポート残存を確認',why:'早めに確認を。',s:[]},{t:'豪はETA／NZはNZeTAを取得',why:'到着前に電子渡航認証が必要。',s:[]},{t:'海外旅行保険に加入',why:'医療費に備える。',s:[]},{t:'現地通貨＋クレカ',why:'カード社会だが現金も少額。',s:[]}]},
+  {title:'通信・移動',icon:'📶',items:[{t:'eSIMを用意',why:'到着後すぐ接続。',s:[]},{t:'変換プラグ Type I・230V',why:'日本と異なる。',s:[]},{t:'オフラインマップをDL',why:'郊外は電波が弱い。',s:[]}]},
+  {title:'服・気候',icon:'🌤️',items:[{t:'南半球は季節が逆・ベスト月に合わせて',why:'日本と逆の季節。',s:[]},{t:'日焼け対策（紫外線が強い）',why:'オセアニアは紫外線が非常に強い。',s:[]},{t:'歩きやすい靴',why:'自然観光が多い。',s:[]}]},
+  {title:'安全・持ち物',icon:'🛡️',items:[{t:'緊急連絡先を控える',why:'紙＋スクショで二重に。',s:[]},{t:'夜は配車・明るい道',why:'基本の安全策。',s:[]},{t:'貴重品分散',why:'置き引き対策。',s:[]},{t:'家族に日程共有',why:'位置共有も有効。',s:[]}]}
+];
+function I(w,c,p,s,a){ return {天気:w,混雑:c,価格:p,旬:s,安心:a}; }
 var DB={
-  'ミュンヘン':{country:'ドイツ',en:'München / Oktoberfest',best:9,badge:'★ 9月・オクトーバーフェスト',foot:'シルバーウィーク 9/19–23',
-    det:{
-      weather:{v:'日中 約19℃ / 朝晩 約9℃・降水あり',src:SRC.wx,note:'平年値・本番はリアルタイム更新'},
-      crowd:{lv:5,label:'非常に混雑',desc:'開幕直後の週末は世界中から集結。人気テントは午前で入場規制になることも。',src:SRC.off_res},
-      price:{v:'航空券 約20万円〜 / 宿 約1.5万円/泊〜',fx:'想定レート 1€ ≈ 165円（本番は当日レートを反映）'},
-      season:'オクトーバーフェスト',
-      safe:{mark:'△',reason:'人目は多く昼は安心。ただし会場はスリ多発、夜は酔客も。貴重品は最小限に。',src:SRC.off_lost}
-    },
-    list:OKT,tags:'#トキタビ #ミュンヘン #オクトーバーフェスト #シルバーウィーク',txt:'ミュンヘンのオクトーバーフェストは9月🍺 シルバーウィークに行ってきます！'},
-  'リスボン':{country:'ポルトガル',en:'Lisbon',best:5,ind:{天気:'快晴・穏やか',混雑:'夏前で空き',価格:'やや割安',旬:'ジャカランダ',安心:'日没20時・夜まで明るい'},list:GENERIC},
-  'バンコク':{country:'タイ',en:'Bangkok',best:12,ind:{天気:'乾季で快適',混雑:'ピーク前で程よい',価格:'底値圏',旬:'ロイクラトン',安心:'人通り多く比較的安心'},list:GENERIC}
+  'ミュンヘン':{country:'ドイツ',en:'München / Oktoberfest',best:9,badge:'★ 9月・オクトーバーフェスト',foot:'シルバーウィーク 9/19–23',det:{weather:{v:'日中 約19℃ / 朝晩 約9℃・降水あり',src:SRC.wx,note:'平年値・本番はリアルタイム更新'},crowd:{lv:5,label:'非常に混雑',desc:'開幕直後の週末は世界中から集結。人気テントは午前で入場規制になることも。',src:SRC.off_res},price:{v:'航空券 約20万円〜 / 宿 約1.5万円/泊〜',fx:'想定レート 1€ ≈ 165円（本番は当日レートを反映）'},season:'オクトーバーフェスト',safe:{mark:'△',reason:'人目は多く昼は安心。ただし会場はスリ多発、夜は酔客も。貴重品は最小限に。',src:SRC.off_lost}},list:OKT,tags:'#トキタビ #ミュンヘン #オクトーバーフェスト',txt:'ミュンヘンのオクトーバーフェストは9月🍺'},
+  'ソウル':{country:'韓国',en:'Seoul',best:10,ind:I('秋晴れで快適','普通','近くて手頃','紅葉','治安良好・日本語も通じやすい'),list:PREP_ASIA},
+  '釜山':{country:'韓国',en:'Busan',best:10,ind:I('秋が快適','落ち着く','手頃','海と紅葉','治安良好'),list:PREP_ASIA},
+  '台北':{country:'台湾',en:'Taipei',best:11,ind:I('涼しく乾燥','やや多め','物価安め','温泉・小籠包','治安良好・夜市も安心'),list:PREP_ASIA},
+  '高雄':{country:'台湾',en:'Kaohsiung',best:11,ind:I('温暖で乾燥','落ち着く','安い','南国フルーツ','のんびり安心'),list:PREP_ASIA},
+  '香港':{country:'中国',en:'Hong Kong',best:11,ind:I('涼しく快適','多い','やや高め','夜景・点心','治安良好'),list:PREP_ASIA},
+  '上海':{country:'中国',en:'Shanghai',best:10,ind:I('秋が快適','多い','中くらい','外灘の夜景','治安良好'),list:PREP_ASIA},
+  'バンコク':{country:'タイ',en:'Bangkok',best:12,ind:I('乾季で快適','多い','底値圏','ロイクラトン','人通り多く比較的安心'),list:PREP_ASIA},
+  'プーケット':{country:'タイ',en:'Phuket',best:12,ind:I('乾季で晴天','多い','中くらい','ビーチ','リゾートは安心'),list:PREP_ASIA},
+  'シンガポール':{country:'シンガポール',en:'Singapore',best:2,ind:I('高温だが雨少なめ','多い','やや高め','都市観光','治安が非常に良い'),list:PREP_ASIA},
+  'クアラルンプール':{country:'マレーシア',en:'Kuala Lumpur',best:6,ind:I('高温多湿','普通','安い','多文化グルメ','まずまず安心'),list:PREP_ASIA},
+  'バリ島':{country:'インドネシア',en:'Bali',best:7,ind:I('乾季で快適','多い','コスパ良','寺院の祭礼','リゾートは安心'),list:PREP_ASIA},
+  'ハノイ':{country:'ベトナム',en:'Hanoi',best:11,ind:I('涼しく乾燥','普通','安い','旧市街','雑踏で持ち物注意'),list:PREP_ASIA},
+  'ホーチミン':{country:'ベトナム',en:'Ho Chi Minh',best:1,ind:I('乾季で過ごしやすい','多い','安い','テト前の活気','スリ注意'),list:PREP_ASIA},
+  'ダナン':{country:'ベトナム',en:'Da Nang',best:5,ind:I('晴天でビーチ日和','普通','安い','海と古都','穏やか'),list:PREP_ASIA},
+  'セブ':{country:'フィリピン',en:'Cebu',best:4,ind:I('乾季で快適','多い','中くらい','ダイビング','リゾートは安心'),list:PREP_ASIA},
+  'シェムリアップ':{country:'カンボジア',en:'Siem Reap',best:12,ind:I('乾季で快適','多い','安い','アンコール遺跡','穏やか'),list:PREP_ASIA},
+  'パリ':{country:'フランス',en:'Paris',best:6,ind:I('日が長く快適','多い','やや高め','公園が満開','観光地はスリ注意'),list:PREP_EU},
+  'ロンドン':{country:'イギリス',en:'London',best:6,ind:I('過ごしやすい','多い','高い','公園・パブ','治安良好（スリ注意）'),list:PREP_EU},
+  'ローマ':{country:'イタリア',en:'Rome',best:5,ind:I('快適','非常に多い','やや高め','遺跡巡り','スリ多発に注意'),list:PREP_EU},
+  'ベネチア':{country:'イタリア',en:'Venice',best:5,ind:I('快適','非常に多い','高い','運河','混雑に注意'),list:PREP_EU},
+  'バルセロナ':{country:'スペイン',en:'Barcelona',best:5,ind:I('地中海で快適','多い','中くらい','ガウディ建築','スリ多発に注意'),list:PREP_EU},
+  'リスボン':{country:'ポルトガル',en:'Lisbon',best:5,ind:I('快晴・穏やか','夏前で空き','やや割安','ジャカランダ','日没20時・夜まで明るい'),list:PREP_EU},
+  'ウィーン':{country:'オーストリア',en:'Vienna',best:5,ind:I('快適','普通','中くらい','音楽・宮殿','治安良好'),list:PREP_EU},
+  'プラハ':{country:'チェコ',en:'Prague',best:5,ind:I('快適','多い','欧州では手頃','旧市街','治安良好'),list:PREP_EU},
+  'アムステルダム':{country:'オランダ',en:'Amsterdam',best:4,ind:I('快適','多い','高い','チューリップ','自転車に注意'),list:PREP_EU},
+  'ヘルシンキ':{country:'フィンランド',en:'Helsinki',best:7,ind:I('白夜で快適','普通','高い','夏の群島','治安良好'),list:PREP_EU},
+  'ダブリン':{country:'アイルランド',en:'Dublin',best:7,ind:I('涼しく緑豊か','普通','やや高め','パブ文化','治安良好'),list:PREP_EU},
+  'インターラーケン':{country:'スイス',en:'Interlaken',best:7,ind:I('アルプスが最盛','多い','非常に高い','山岳リゾート','治安良好'),list:PREP_EU},
+  'ニューヨーク':{country:'アメリカ',en:'New York',best:5,ind:I('快適','多い','高い','摩天楼','エリアを選べば安心'),list:PREP_US},
+  'ロサンゼルス':{country:'アメリカ',en:'Los Angeles',best:5,ind:I('温暖で快適','多い','高い','ビーチ・映画','エリアに注意'),list:PREP_US},
+  'ラスベガス':{country:'アメリカ',en:'Las Vegas',best:5,ind:I('乾燥・暑い','多い','中〜高','ショー','夜は大通り中心に'),list:PREP_US},
+  'サンフランシスコ':{country:'アメリカ',en:'San Francisco',best:9,ind:I('快適','多い','高い','坂と湾','一部エリアは注意'),list:PREP_US},
+  'ホノルル':{country:'アメリカ',en:'Honolulu',best:5,ind:I('常夏で快適','多い','高い','ワイキキ','夜も人通り多く安心'),list:PREP_US},
+  'グアム':{country:'アメリカ',en:'Guam',best:12,ind:I('乾季で常夏','多い','中くらい','ビーチ','家族向けで安心'),list:PREP_US},
+  'バンクーバー':{country:'カナダ',en:'Vancouver',best:7,ind:I('夏が快適','普通','高い','自然と都市','治安良好'),list:PREP_US},
+  'シドニー':{country:'オーストラリア',en:'Sydney',best:11,ind:I('春が快適','多い','高い','オペラハウス','治安良好'),list:PREP_OCE},
+  'ケアンズ':{country:'オーストラリア',en:'Cairns',best:7,ind:I('乾季で快適','普通','中くらい','グレートバリアリーフ','穏やか'),list:PREP_OCE},
+  'ゴールドコースト':{country:'オーストラリア',en:'Gold Coast',best:4,ind:I('温暖でサーフ日和','多い','中くらい','ビーチ','家族向けで安心'),list:PREP_OCE},
+  'オークランド':{country:'ニュージーランド',en:'Auckland',best:3,ind:I('温暖','普通','高い','自然','治安良好'),list:PREP_OCE},
+  'ドバイ':{country:'アラブ首長国連邦',en:'Dubai',best:11,ind:I('冬は快適','多い','高い','砂漠・モール','治安が非常に良い'),list:GENERIC},
+  'イスタンブール':{country:'トルコ',en:'Istanbul',best:5,ind:I('快適','多い','中くらい','モスク・バザール','スリに注意'),list:GENERIC},
+  'カイロ':{country:'エジプト',en:'Cairo',best:11,ind:I('乾燥で快適','多い','安い','ピラミッド','雑踏・客引きに注意'),list:GENERIC},
+  'マラケシュ':{country:'モロッコ',en:'Marrakech',best:4,ind:I('快適','多い','安い','スーク','客引きに注意'),list:GENERIC},
+  'カンクン':{country:'メキシコ',en:'Cancun',best:12,ind:I('乾季でビーチ日和','多い','中くらい','カリブ海','リゾートは安心'),list:GENERIC}
 };
 var AU_PARSED=[
   ['9/18 金','成田→ハノイ（乗継、トレインストリート＆タンロン城）'],
@@ -308,7 +367,7 @@ function bindInput(){
   render();
 }
 function resultScreen(){
-  var body=state.dests.map(function(name){ var d=lookup(name); if(!d) return '<div class="card"><div class="city">'+name+'</div><p style="color:#993C1D;font-size:13px;margin-top:12px;line-height:1.6;">本番ではAIが気候・混雑・価格・旬・安心度からベスト月を提案します。（デモ対応：ミュンヘン / リスボン / バンコク）</p></div>'; return shiori(d,true); }).join('');
+  var body=state.dests.map(function(name){ var d=lookup(name); if(!d) return '<div class="card"><div class="city">'+name+'</div><p style="color:#993C1D;font-size:13px;margin-top:12px;line-height:1.6;">この行き先はまだ準備中です🙏 いまは主要40都市に対応しています。近いおすすめ：ソウル・台北・バンコク・パリ・ホノルル など。順次追加していきます。</p></div>'; return shiori(d,true); }).join('');
   return '<div style="font-size:13px;color:#993C1D;margin-bottom:12px;">✦ '+state.dests.length+'件の行き先のベスト時期</div>'+body+'<p class="demo">「詳しい行程プランを作る」でAIが日程案を作成します。</p>';
 }
 var ITIN={
